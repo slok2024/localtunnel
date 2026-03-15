@@ -1,130 +1,34 @@
-# localtunnel
+🚀 项目名称：Localtunnel 专业控制面板
+Localtunnel 是一个基于 Node.js 的开源内网穿透工具，而本项目通过 Golang/Node 核心编译 与 Python PyQt5 界面封装，将其转化为一个适合 Windows 环境的高级图形化工具。
 
-localtunnel exposes your localhost to the world for easy testing and sharing! No need to mess with DNS or deploy just to have others test out your changes.
+1. 核心功能
+内网穿透：将本地运行的服务（如 Web、API 接口、数据库）瞬间暴露到公网，无需公网 IP，无需配置路由器。
 
-Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks.
+固定子域名：支持通过 -s 参数申请自定义域名，方便第三方 Webhook 回调调试。
 
-## Quickstart
+HTTPS 支持：支持本地 HTTPS 服务的穿透，并可指定 SSL 证书路径。
 
-```
-npx localtunnel --port 8000
-```
+全参数控制：GUI 界面集成了 lt 命令行所有的参数选项，操作直观。
 
-## Installation
+2. 技术架构
+该项目采用了多语言协作的架构方案：
 
-### Globally
+内核层 (lt.exe)：由 Node.js 源码通过 pkg 编译而成的二进制文件，负责处理中转服务器的 WebSocket 连接。
 
-```
-npm install -g localtunnel
-```
+界面层 (GUI)：基于 Python 3.8 (32-bit) 和 PyQt5 开发，提供参数输入、日志实时显示及配置持久化功能。
 
-### As a dependency in your project
+分发层 (All-In-One)：通过 PyInstaller 将内核静默封装。程序运行后会自动识别环境并释放内核，实现“单文件绿色运行”。
 
-```
-yarn add localtunnel
-```
+3. 应用场景
+Web 开发调试：展示本地网页给异地客户预览。
 
-### Homebrew
+Webhook 接收：调试微信小程序、Twilio、Stripe 等需要公网回调的服务。
 
-```bash
-brew install localtunnel
-```
+临时演示：在没有公网环境的现场，临时搭建一个公网可访问的演示平台。
 
-## CLI usage
+📖 使用说明
+启动设置：在界面输入你的本地服务端口（例如 8000）。
 
-When localtunnel is installed globally, just use the `lt` command to start the tunnel.
+建立隧道：点击“开启隧道”，日志框会显示 your url is: https://xxxx.loca.lt。
 
-```
-lt --port 8000
-```
-
-Thats it! It will connect to the tunnel server, setup the tunnel, and tell you what url to use for your testing. This url will remain active for the duration of your session; so feel free to share it with others for happy fun time!
-
-You can restart your local server all you want, `lt` is smart enough to detect this and reconnect once it is back.
-
-### Arguments
-
-Below are some common arguments. See `lt --help` for additional arguments
-
-- `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
-- `--local-host` proxy to a hostname other than localhost
-
-You may also specify arguments via env variables. E.x.
-
-```
-PORT=3000 lt
-```
-
-## API
-
-The localtunnel client is also usable through an API (for test integration, automation, etc)
-
-### localtunnel(port [,options][,callback])
-
-Creates a new localtunnel to the specified local `port`. Will return a Promise that resolves once you have been assigned a public localtunnel url. `options` can be used to request a specific `subdomain`. A `callback` function can be passed, in which case it won't return a Promise. This exists for backwards compatibility with the old Node-style callback API. You may also pass a single options object with `port` as a property.
-
-```js
-const localtunnel = require("localtunnel");
-
-(async () => {
-  const tunnel = await localtunnel({ port: 3000 });
-
-  // the assigned public url for your tunnel
-  // i.e. https://abcdefgjhij.localtunnel.me
-  tunnel.url;
-
-  tunnel.on("close", () => {
-    // tunnels are closed
-  });
-})();
-```
-
-#### options
-
-- `port` (number) [required] The local port number to expose through localtunnel.
-- `subdomain` (string) Request a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availability.
-- `host` (string) URL for the upstream proxy server. Defaults to `https://localtunnel.me`.
-- `local_host` (string) Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
-- `local_https` (boolean) Enable tunneling to local HTTPS server.
-- `local_cert` (string) Path to certificate PEM file for local HTTPS server.
-- `local_key` (string) Path to certificate key file for local HTTPS server.
-- `local_ca` (string) Path to certificate authority file for self-signed certificates.
-- `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
-
-Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.
-
-### Tunnel
-
-The `tunnel` instance returned to your callback emits the following events
-
-| event   | args | description                                                                          |
-| ------- | ---- | ------------------------------------------------------------------------------------ |
-| request | info | fires when a request is processed by the tunnel, contains _method_ and _path_ fields |
-| error   | err  | fires when an error happens on the tunnel                                            |
-| close   |      | fires when the tunnel has closed                                                     |
-
-The `tunnel` instance has the following methods
-
-| method | args | description      |
-| ------ | ---- | ---------------- |
-| close  |      | close the tunnel |
-
-## other clients
-
-Clients in other languages
-
-_go_ [gotunnelme](https://github.com/NoahShen/gotunnelme)
-
-_go_ [go-localtunnel](https://github.com/localtunnel/go-localtunnel)
-
-_C#/.NET_ [localtunnel-client](https://github.com/angelobreuer/localtunnel.net)
-
-_Rust_ [rlt](https://github.com/kaichaosun/rlt)
-
-## server
-
-See [localtunnel/server](//github.com/localtunnel/server) for details on the server that powers localtunnel.
-
-## License
-
-MIT
+访问验证：第一次打开 URL 时，需要输入运行本程序电脑的公网 IP 作为访问密码（访问 loca.lt/mytunnelpassword 获取）。
