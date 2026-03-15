@@ -1,5 +1,5 @@
 # 🚀 项目名称：Localtunnel 专业控制面板
-# Localtunnel 是一个基于 Node.js 的开源内网穿透工具，而本项目通过 Golang/Node 核心编译 与 Python PyQt5 界面封装，将其转化为一个适合 Windows 环境的高级图形化工具。
+# Localtunnel 是一个基于 Node.js 的开源内网穿透工具，而本项目通过 Node 核心编译 与 Python PyQt5 界面封装，将其转化为一个适合 Windows 环境的高级图形化工具。
 
 # 1. 核心功能
 内网穿透：将本地运行的服务（如 Web、API 接口、数据库）瞬间暴露到公网，无需公网 IP，无需配置路由器。
